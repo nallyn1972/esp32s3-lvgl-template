@@ -21,6 +21,8 @@ managed_components/
 *.code-workspace
 # Keep .vscode for cross-platform support
 # .vscode/
+.clangd
+compile_flags.txt
 
 # Python
 __pycache__/
