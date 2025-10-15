@@ -1,12 +1,18 @@
 # Build artifacts
 build/
-sdkconfig
-sdkconfig.old
 *.bin
 *.elf
 *.map
 
+# SDK Configuration
+# Keep sdkconfig.defaults in git (template settings)
+# Ignore generated sdkconfig (user-specific)
+sdkconfig
+sdkconfig.old
+sdkconfig.ci
+
 # Dependencies
+# dependencies.lock is auto-generated, should not be in git
 dependencies.lock
 managed_components/
 

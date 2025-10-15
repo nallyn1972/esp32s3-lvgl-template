@@ -47,6 +47,8 @@ This template is designed for the following hardware setup:
 
 📖 **For detailed setup instructions for both Linux and Windows, see [SETUP.md](SETUP.md)**
 
+📋 **For configuration file explanations, see [CONFIGURATION.md](CONFIGURATION.md)**
+
 ### Quick Start
 
 #### Prerequisites
