@@ -11,9 +11,10 @@ dependencies.lock
 managed_components/
 
 # IDE
-.vscode/
 .idea/
 *.code-workspace
+# Keep .vscode for cross-platform support
+# .vscode/
 
 # Python
 __pycache__/

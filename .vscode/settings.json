@@ -1,0 +1,18 @@
+{
+  "C_Cpp.intelliSenseEngine": "default",
+  "C_Cpp.intelliSenseEngineFallback": "enabled",
+  "idf.adapterTargetName": "esp32",
+  "idf.customExtraPaths": "",
+  "idf.customExtraVars": {},
+  "idf.flashType": "UART",
+  "idf.openOcdConfigs": [
+    "board/esp32-wrover-kit-3.3v.cfg"
+  ],
+  "idf.portWin": "COM3",
+  "idf.port": "/dev/ttyUSB0",
+  "files.associations": {
+    "*.h": "c",
+    "*.c": "c"
+  },
+  "C_Cpp.default.compileCommands": "${workspaceFolder}/build/compile_commands.json"
+}

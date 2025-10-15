@@ -2,6 +2,8 @@
 
 A ready-to-use ESP-IDF project template for ESP32-S3 with LVGL GUI framework, ILI9341 LCD display, and rotary encoder input.
 
+**Cross-Platform**: Works on both **Linux** and **Windows 11** with VS Code.
+
 ## Hardware Configuration
 
 This template is designed for the following hardware setup:
@@ -43,34 +45,54 @@ This template is designed for the following hardware setup:
 
 ## Getting Started
 
-### Prerequisites
+📖 **For detailed setup instructions for both Linux and Windows, see [SETUP.md](SETUP.md)**
 
-- ESP-IDF v5.0 or later installed
+### Quick Start
+
+#### Prerequisites
+
+- ESP-IDF v5.3 installed ([Installation Guide](SETUP.md#installation))
+- Visual Studio Code with ESP-IDF extension
 - Python 3.8+
 - ESP32-S3 board with the hardware configuration above
 
-### Build and Flash
+#### Build and Flash
 
-1. **Set up ESP-IDF environment**:
-   ```bash
-   . $HOME/esp/esp-idf/export.sh
-   ```
+**Linux:**
+```bash
+# Set up ESP-IDF environment
+. $HOME/esp/esp-idf/export.sh
 
-2. **Navigate to project**:
-   ```bash
-   cd esp32s3-lvgl-template
-   ```
+# Navigate to project
+cd esp32s3-lvgl-template
 
-3. **Build the project**:
-   ```bash
-   idf.py build
-   ```
+# Build
+idf.py build
 
-4. **Flash to ESP32-S3**:
-   ```bash
-   idf.py -p /dev/ttyUSB0 flash monitor
-   ```
-   (Replace `/dev/ttyUSB0` with your port)
+# Flash to ESP32-S3
+idf.py -p /dev/ttyUSB0 flash monitor
+```
+
+**Windows:**
+```powershell
+# Set up ESP-IDF environment
+$HOME\esp\esp-idf\export.ps1
+
+# Navigate to project
+cd esp32s3-lvgl-template
+
+# Build
+idf.py build
+
+# Flash to ESP32-S3
+idf.py -p COM3 flash monitor
+```
+
+#### Using VS Code
+
+1. Open project in VS Code
+2. Press `Ctrl+Shift+B` to build
+3. Use Command Palette (`Ctrl+Shift+P`) → `Tasks: Run Task` → `Flash & Monitor - ESP-IDF`
 
 ## Project Structure
 
@@ -81,8 +103,13 @@ esp32s3-lvgl-template/
 │   ├── hardware_config.h   # Hardware pin definitions
 │   ├── CMakeLists.txt      # Component build config
 │   └── idf_component.yml   # Component dependencies
+├── .vscode/
+│   ├── c_cpp_properties.json  # IntelliSense (Linux & Windows)
+│   ├── settings.json          # VS Code settings
+│   └── tasks.json             # Build/Flash tasks
 ├── CMakeLists.txt          # Project build config
-└── README.md               # This file
+├── README.md               # This file
+└── SETUP.md                # Detailed setup guide
 ```
 
 ## Customizing the Template
