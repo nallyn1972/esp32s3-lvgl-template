@@ -25,18 +25,18 @@ extern "C" {
 
 // SPI Bus Configuration
 #define LCD_HOST            SPI2_HOST
-#define LCD_PIN_NUM_SCLK    12
-#define LCD_PIN_NUM_MOSI    11
-#define LCD_PIN_NUM_MISO    13
+#define LCD_PIN_NUM_SCLK    18
+#define LCD_PIN_NUM_MOSI    19
+#define LCD_PIN_NUM_MISO    21
 
 // LCD Control Pins
-#define LCD_PIN_NUM_LCD_DC  10
-#define LCD_PIN_NUM_LCD_CS  9
-#define LCD_PIN_NUM_LCD_RST 14
+#define LCD_PIN_NUM_LCD_DC  5
+#define LCD_PIN_NUM_LCD_CS  4
+#define LCD_PIN_NUM_LCD_RST 3
 
 // LCD Display Parameters
-#define LCD_H_RES           320
-#define LCD_V_RES           240
+#define LCD_H_RES           240
+#define LCD_V_RES           320
 #define LCD_PIXEL_CLOCK_HZ  (40 * 1000 * 1000)
 #define LCD_CMD_BITS        8
 #define LCD_PARAM_BITS      8
@@ -46,7 +46,7 @@ extern "C" {
 // Backlight Configuration (PWM/LEDC)
 // =============================================================================
 
-#define BK_LIGHT_OUTPUT_IO  8
+#define BK_LIGHT_OUTPUT_IO  2
 #define BK_LIGHT_MODE       LEDC_LOW_SPEED_MODE
 #define BK_LIGHT_CHANNEL    LEDC_CHANNEL_0
 #define BK_LIGHT_TIMER      LEDC_TIMER_0
