@@ -24,11 +24,8 @@
 #include "driver/spi_master.h"
 #include "driver/ledc.h"
 #include "esp_lvgl_port.h"
-#include "esp_lvgl_port_knob.h"
 #include "lvgl.h"
-#include "iot_knob.h"
-#include "iot_button.h"
-#include "button_gpio.h"
+#include "ec11_encoder.h"
 
 #include "hardware_config.h"
 
@@ -124,6 +121,30 @@ static esp_err_t backlight_init(void)
 }
 
 // =============================================================================
+// Encoder Initialization using EC11 Component
+// =============================================================================
+
+static esp_err_t encoder_init(void)
+{
+    ESP_LOGI(TAG, "Initialize EC11 encoder component");
+    
+    // Configure encoder
+    ec11_encoder_config_t encoder_config = {
+        .gpio_a = EC11_GPIO_A,
+        .gpio_b = EC11_GPIO_B,
+        .gpio_button = EC11_GPIO_BUTTON,
+        .button_active_low = (BUTTON_ACTIVE_LEVEL == 0),
+        .debounce_ms = 8
+    };
+    
+    // Initialize encoder
+    ESP_ERROR_CHECK(ec11_encoder_init(&encoder_config));
+    
+    ESP_LOGI(TAG, "EC11 encoder initialized successfully");
+    return ESP_OK;
+}
+
+// =============================================================================
 // LVGL Initialization
 // =============================================================================
 
@@ -161,42 +182,20 @@ static esp_err_t lvgl_init(void)
     };
     lvgl_disp = lvgl_port_add_disp(&disp_cfg);
 
-    // Configure rotary encoder button (button v4 API)
-    button_config_t btn_cfg = {
-        .long_press_time = 1000,
-        .short_press_time = 50,
-    };
+    // Initialize encoder component
+    ESP_ERROR_CHECK(encoder_init());
 
-    button_gpio_config_t gpio_cfg = {
-        .gpio_num = EC11_GPIO_BUTTON,
-        .active_level = BUTTON_ACTIVE_LEVEL,
-        .enable_power_save = false,
-        .disable_pull = false,
-    };
-
-    button_handle_t btn_handle = NULL;
-    ESP_ERROR_CHECK(iot_button_new_gpio_device(&btn_cfg, &gpio_cfg, &btn_handle));
-
-    // Configure rotary encoder
-    knob_config_t knob_cfg = {
-        .default_direction = 0,
-        .gpio_encoder_a = EC11_GPIO_A,
-        .gpio_encoder_b = EC11_GPIO_B,
-    };
-
-    const lvgl_port_encoder_cfg_t enc_cfg = {
-        .disp = lvgl_disp,
-        .encoder_a_b = &knob_cfg,
-        .encoder_enter = btn_handle,
-    };
-
-    ESP_LOGI(TAG, "Add encoder input device");
-    lvgl_encoder_indev = lvgl_port_add_encoder(&enc_cfg);
-
+    // Create LVGL input device for encoder
+    ESP_LOGI(TAG, "Create LVGL encoder input device");
+    lvgl_encoder_indev = ec11_encoder_create_lvgl_indev();
+    
     // Create default group and set as default
     default_group = lv_group_create();
     lv_group_set_default(default_group);
     lv_indev_set_group(lvgl_encoder_indev, default_group);
+    
+    // Configure group to reduce navigation sensitivity
+    lv_group_set_wrap(default_group, true);  // Allow wrapping around items
 
     ESP_LOGI(TAG, "LVGL initialization complete");
     return ESP_OK;
@@ -242,25 +241,44 @@ static void create_demo_ui(void)
     lv_obj_set_style_text_align(info, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
     lv_obj_align(info, LV_ALIGN_CENTER, 0, 0);
 
-    // Create a slider as interactive example
-    lv_obj_t *slider = lv_slider_create(scr);
-    lv_obj_set_width(slider, 200);
-    lv_obj_align(slider, LV_ALIGN_BOTTOM_MID, 0, -30);
-    lv_slider_set_range(slider, 0, 100);
-    lv_slider_set_value(slider, 50, LV_ANIM_OFF);
+    // Create first slider as interactive example
+    lv_obj_t *slider1 = lv_slider_create(scr);
+    lv_obj_set_width(slider1, 200);
+    lv_obj_align(slider1, LV_ALIGN_BOTTOM_MID, 0, -50);
+    lv_slider_set_range(slider1, 0, 100);
+    lv_slider_set_value(slider1, 50, LV_ANIM_OFF);
     
-    // Add slider to group so encoder can control it
-    lv_group_add_obj(default_group, slider);
-    lv_group_focus_obj(slider);
+    // Add first slider to group so encoder can control it
+    lv_group_add_obj(default_group, slider1);
+    lv_group_focus_obj(slider1);
 
-    // Value label for slider
-    lv_obj_t *value_label = lv_label_create(scr);
-    lv_label_set_text(value_label, "50");
-    lv_obj_set_style_text_color(value_label, lv_color_hex(0xFFFFFF), LV_PART_MAIN);
-    lv_obj_align_to(value_label, slider, LV_ALIGN_OUT_TOP_MID, 0, -10);
+    // Value label for first slider
+    lv_obj_t *value_label1 = lv_label_create(scr);
+    lv_label_set_text(value_label1, "50");
+    lv_obj_set_style_text_color(value_label1, lv_color_hex(0xFFFFFF), LV_PART_MAIN);
+    lv_obj_align_to(value_label1, slider1, LV_ALIGN_OUT_TOP_MID, 0, -10);
 
-    // Add event to update label when slider changes
-    lv_obj_add_event_cb(slider, slider_event_cb, LV_EVENT_VALUE_CHANGED, value_label);
+    // Add event to update label when first slider changes
+    lv_obj_add_event_cb(slider1, slider_event_cb, LV_EVENT_VALUE_CHANGED, value_label1);
+
+    // Create second slider with different range
+    lv_obj_t *slider2 = lv_slider_create(scr);
+    lv_obj_set_width(slider2, 180);
+    lv_obj_align(slider2, LV_ALIGN_BOTTOM_MID, 0, -15);
+    lv_slider_set_range(slider2, -50, 50);
+    lv_slider_set_value(slider2, 0, LV_ANIM_OFF);
+    
+    // Add second slider to group so encoder can control it
+    lv_group_add_obj(default_group, slider2);
+
+    // Value label for second slider  
+    lv_obj_t *value_label2 = lv_label_create(scr);
+    lv_label_set_text(value_label2, "0");
+    lv_obj_set_style_text_color(value_label2, lv_color_hex(0xFFFFFF), LV_PART_MAIN);
+    lv_obj_align_to(value_label2, slider2, LV_ALIGN_OUT_TOP_MID, 0, -10);
+
+    // Add event to update label when second slider changes
+    lv_obj_add_event_cb(slider2, slider_event_cb, LV_EVENT_VALUE_CHANGED, value_label2);
 
     // Unlock LVGL mutex
     lvgl_port_unlock();

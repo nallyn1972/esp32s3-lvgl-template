@@ -59,9 +59,9 @@ extern "C" {
 // Rotary Encoder Configuration (EC11)
 // =============================================================================
 
-#define EC11_GPIO_A         1   // Encoder phase A
-#define EC11_GPIO_B         2   // Encoder phase B
-#define EC11_GPIO_BUTTON    3   // Encoder button (push)
+#define EC11_GPIO_A         47   // Encoder phase A
+#define EC11_GPIO_B         48   // Encoder phase B
+#define EC11_GPIO_BUTTON    6   // Encoder button (push)
 
 // Button configuration
 #define BUTTON_ACTIVE_LEVEL 0   // Active low
